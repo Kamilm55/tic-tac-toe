@@ -1,14 +1,58 @@
 import React, { Component } from 'react'
-import Square from './Square'
+import Square from './Square';
 
 export default class Board extends Component {
-  renderSquare(i){
-    return <Square value={i} />
+  constructor(props){
+    super(props);
+    this.state = {
+      squares: Array(9).fill(null),
+      xIsNext:true,
+    }
   }
-  
-    render() {
-        const status ="Next player: X"
+  handleClick(i){
+    const squares = {...this.state.squares};//Copy array it can be with array.silce() method
+    if(this.calculateWinner(squares) || squares[i])//If any of these different from null it works
+    squares[i] = this.state.xIsNext ? `X` : `O`;
+    this.setState({
+      squares: squares,
+      xIsNext:!this.state.xIsNext,});
+  }
+
+  renderSquare(i){
     return (
+    <Square 
+    value={this.state.squares[i]}
+    onClick={() => this.handleClick(i)} />);}
+  
+     /* calculateWinner(squares) {
+      const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+          return squares[a];
+        }
+      }
+      return null;
+    } */
+  render() {
+          const winner = this.calculateWinner(this.state.squares)
+          let status;
+          if(winner) {
+            status = `Winner: ${winner}`
+          }
+          else{
+            status = `Current Player: ${this.state.xIsNext ? `X` : `O`}`
+          }
+          return (
       <div className='board'>
         <h1>{status}</h1>
         <div className='board-row'>
